@@ -1,4 +1,5 @@
-﻿
+﻿@model IEnumerable<web.Areas.admin.Models.Article>
+
 @{
     Layout = null;
 }
@@ -30,7 +31,22 @@ License URL: http://creativecommons.org/licenses/by/3.0/
             <div class="blog-top-grids">
                 <div class="col-md-8 blog-top-left-grid">
                     <div class="left-blog">
-                        @Html.Action("ArticleList")
+                        @foreach (var item in Model)
+                        {
+                            <div class="blog-left">
+                                <div class="blog-left-left">
+                                    <p>Posted By <a href="#">Admin</a> &nbsp;&nbsp; @item.CreateDate.ToString("dd.MM.yyyy HH:mm") &nbsp;&nbsp; <a href="#">Comments (10)</a></p>
+                                    <a href="#"><img src="~/UploadedFiles/@item.ArticleImage" alt="" /></a>
+                                </div>
+                                <div class="blog-left-right">
+                                    <a href="#">@item.Caption </a>
+                                    <p>
+                                        @Html.Raw(item.ArticleContent)
+                                    </p>
+                                </div>
+                                <div class="clearfix"> </div>
+                            </div>
+                        }
                     </div>
                     <nav>
                         <ul class="pagination">

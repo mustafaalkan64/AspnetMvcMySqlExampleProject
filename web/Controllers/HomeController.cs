@@ -48,11 +48,60 @@ namespace web.Controllers
             }
         }
 
-        public ActionResult Blog()
+        public ActionResult Blog(int CategoryId = 0, int Month = 0)
         {
             try
             {
-                return View();
+                var listArticle = new List<Article>();
+                //Creating instance of DatabaseContext class  
+                using (var connection = new MySqlConnection(myConnectionString))
+                {
+                    connection.Open();
+                    string sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                        " join articleımages as aı on a.Id = aı.ArticleId " +
+                        " join category as c on a.CategoryId = c.ID order by ID desc ";
+
+                    if(CategoryId > 0)
+                    {
+                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                         " join articleımages as aı on a.Id = aı.ArticleId " +
+                         " join category as c on a.CategoryId = c.ID " +
+                         " where c.ID = @categoryId order by ID desc ";
+                    }
+                    if (Month > 0)
+                    {
+                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                         " join articleımages as aı on a.Id = aı.ArticleId " +
+                         " join category as c on a.CategoryId = c.ID " +
+                         " where MONTH(a.CreateDate) = @month order by ID desc ";
+                    }
+                    using (MySqlCommand cmd = new MySqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("?categoryId", CategoryId);
+                        cmd.Parameters.AddWithValue("?month", Month);
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows == true)
+                            {
+                                while (reader.Read())
+                                {
+                                    var article = new Article();
+                                    article.ID = Convert.ToInt32(reader["ID"]);
+                                    article.ArticleContent = reader["ArticleContent"].ToString();
+                                    article.Caption = reader["Caption"].ToString();
+                                    article.CategoryName = reader["CategoryName"].ToString();
+                                    article.ArticleImage = reader["imageurl"].ToString();
+                                    article.CreateDate = Convert.ToDateTime(reader["CreateDate"]);
+                                    article.UpdateDate = Convert.ToDateTime(reader["UpdateDate"] == DBNull.Value ? DateTime.MinValue : reader["UpdateDate"]);
+                                    listArticle.Add(article);
+                                }
+                            }
+                        }
+                        cmd.Dispose();
+                    }
+                    connection.Close();
+                }
+                return View(listArticle);
             }
             catch (MySqlException ex)
             {
@@ -150,7 +199,7 @@ namespace web.Controllers
 
                                 }
                                 categoryModel.DisplayName = categoryModel.MonthName + "(" + categoryModel.Count + ")";
-                                categoryModel.Url = "/Home/Blog?Month" + categoryModel.Month;
+                                categoryModel.Url = "/Home/Blog?Month=" + categoryModel.Month;
                                 categoryList.Add(categoryModel);
 
                             }
