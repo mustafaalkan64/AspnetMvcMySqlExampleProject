@@ -1,0 +1,22 @@
+﻿@model IEnumerable<web.Areas.admin.Models.Article>
+
+@{
+    Layout = null;
+}
+
+@foreach (var item in Model)
+{
+<div class="blog-left">
+    <div class="blog-left-left">
+        <p>Posted By <a href="#">Admin</a> &nbsp;&nbsp; @item.CreateDate.ToString("dd.MM.yyyy HH:mm") &nbsp;&nbsp; <a href="#">Comments (10)</a></p>
+        <a href="#"><img src="~/UploadedFiles/@item.ArticleImage" alt="" /></a>
+    </div>
+    <div class="blog-left-right">
+        <a href="#">@item.Caption </a>
+        <p>
+            @Html.Raw(item.ArticleContent)
+        </p>
+    </div>
+    <div class="clearfix"> </div>
+</div>
+}

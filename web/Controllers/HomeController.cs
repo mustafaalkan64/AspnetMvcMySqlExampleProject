@@ -267,11 +267,40 @@ namespace web.Controllers
             }
         }
 
-        public ActionResult About()
+        public ActionResult ArticleList()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            var listArticle = new List<Article>();
+            //Creating instance of DatabaseContext class  
+            using (var connection = new MySqlConnection(myConnectionString))
+            {
+                connection.Open();
+                using (MySqlCommand cmd = new MySqlCommand("select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                    " join articleımages as aı on a.Id = aı.ArticleId " +
+                    " join category as c on a.CategoryId = c.ID order by ID desc ", connection))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows == true)
+                        {
+                            while (reader.Read())
+                            {
+                                var article = new Article();
+                                article.ID = Convert.ToInt32(reader["ID"]);
+                                article.ArticleContent = reader["ArticleContent"].ToString();
+                                article.Caption = reader["Caption"].ToString();
+                                article.CategoryName = reader["CategoryName"].ToString();
+                                article.ArticleImage = reader["imageurl"].ToString();
+                                article.CreateDate = Convert.ToDateTime(reader["CreateDate"]);
+                                article.UpdateDate = Convert.ToDateTime(reader["UpdateDate"] == DBNull.Value ? DateTime.MinValue : reader["UpdateDate"]);
+                                listArticle.Add(article);
+                            }
+                        }
+                    }
+                    cmd.Dispose();
+                }
+                connection.Close();
+            }
+            return View(listArticle);
         }
 
         public ActionResult RegisterUser()
