@@ -1,0 +1,10 @@
+﻿@model IEnumerable<web.Models.CategoryModel>
+@{
+    Layout = null;
+}
+<ul>
+    @foreach (var item in Model)
+    {
+        <li><a href="@item.URL"><i class="fa fa-angle-right" aria-hidden="true"></i>@item.Name</a></li>
+    }
+</ul>

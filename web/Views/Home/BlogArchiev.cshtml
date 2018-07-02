@@ -1,0 +1,11 @@
+﻿@model IEnumerable<web.Models.ArticleGroupByMonth>
+
+@{
+    Layout = null;
+}
+<ul>
+    @foreach (var item in Model)
+    {
+        <li><a href="@item.Url"><i class="fa fa-angle-right" aria-hidden="true"></i>@item.DisplayName</a></li>
+    }
+</ul>
