@@ -108,42 +108,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         <h3>Arşiv</h3>
                         @Html.Action("BlogArchiev")
                     </div>
-                    <div class="comments">
-                        <h3>Recent Comments</h3>
-                        <div class="comments-text">
-                            <div class="col-md-3 comments-left">
-                                <img src="~/images/t1.jpg" alt="" />
-                            </div>
-                            <div class="col-md-9 comments-right">
-                                <h5>Admin</h5>
-                                <a href="#">Phasellus sem leointerdum risus</a>
-                                <p>March 16,2017 6:09:pm</p>
-                            </div>
-                            <div class="clearfix"> </div>
-                        </div>
-                        <div class="comments-text">
-                            <div class="col-md-3 comments-left">
-                                <img src="~/images/t2.jpg" alt="" />
-                            </div>
-                            <div class="col-md-9 comments-right">
-                                <h5>Admin</h5>
-                                <a href="#">Phasellus sem leointerdum risus</a>
-                                <p>March 16,2017 6:09:pm</p>
-                            </div>
-                            <div class="clearfix"> </div>
-                        </div>
-                        <div class="comments-text">
-                            <div class="col-md-3 comments-left">
-                                <img src="~/images/t3.jpg" alt="" />
-                            </div>
-                            <div class="col-md-9 comments-right">
-                                <h5>Admin</h5>
-                                <a href="#">Phasellus sem leointerdum risus</a>
-                                <p>March 16,2017 6:09:pm</p>
-                            </div>
-                            <div class="clearfix"> </div>
-                        </div>
-                    </div>
+                    @Html.Action("RecentComments")
                 </div>
                 <div class="clearfix"> </div>
             </div>

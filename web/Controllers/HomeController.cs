@@ -237,6 +237,36 @@ namespace web.Controllers
             }
         }
 
+        public ActionResult RecentComments()
+        {
+            using (MySqlConnection connection = new MySqlConnection(myConnectionString))
+            {
+                connection.Open();
+                using (MySqlCommand cmd = new MySqlCommand("SELECT commentbyusername, comment, createdate FROM webdb.comments where isaccepted = 1 order by ID desc  LIMIT 3 ;", connection))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        var commentList = new List<Comments>();
+                        if (reader.HasRows == true)
+                        {
+                            while (reader.Read())
+                            {
+                                var categoryModel = new Comments();
+                                categoryModel.CommentByUserName = reader.GetString("commentbyusername");
+                                categoryModel.Comment = reader.GetString("commentbyusername");
+                                categoryModel.CreateDate = Convert.ToDateTime(reader["createdate"] == DBNull.Value ? DateTime.MinValue : reader["createdate"]);
+                                commentList.Add(categoryModel);
+
+                            }
+                        }
+                        connection.Close();
+                        connection.Dispose();
+                        return View(commentList);
+                    }
+                }
+            }
+        }
+
         public ActionResult About()
         {
             ViewBag.Message = "Your application description page.";
