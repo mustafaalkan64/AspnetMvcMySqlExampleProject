@@ -12,6 +12,7 @@ namespace web.Areas.admin.Models
         public Article()
         {
             this.Categories = new List<Category>();
+            this.Comments = new List<Comments>();
         }
         [Key]
         public int ID { get; set; }
@@ -34,7 +35,9 @@ namespace web.Areas.admin.Models
         [Display(Name = "Kategori")]
         [Required(ErrorMessage = "Kategori Seçilmelidir")]
         public int CategoryId { get; set; }
+        public int _count { get; set; }
         public string CategoryName { get; set; }
         public List<Category> Categories { get; set; }
+        public List<Comments> Comments { get; set; }
     }
 }

@@ -17,6 +17,7 @@ namespace web.Models
     {
         public int Count { get; set; }
         public int Month { get; set; }
+        public int Year { get; set; }
         public string MonthName { get; set; }
         public string Url { get; set; }
         public string DisplayName { get; set; }

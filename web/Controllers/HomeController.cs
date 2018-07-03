@@ -57,22 +57,25 @@ namespace web.Controllers
                 using (var connection = new MySqlConnection(myConnectionString))
                 {
                     connection.Open();
-                    string sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                    string sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
                         " join articleımages as aı on a.Id = aı.ArticleId " +
+                        " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
                         " join category as c on a.CategoryId = c.ID order by ID desc ";
 
                     if(CategoryId > 0)
                     {
-                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
                          " join articleımages as aı on a.Id = aı.ArticleId " +
                          " join category as c on a.CategoryId = c.ID " +
+                         " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
                          " where c.ID = @categoryId order by ID desc ";
                     }
                     if (Month > 0)
                     {
-                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
                          " join articleımages as aı on a.Id = aı.ArticleId " +
                          " join category as c on a.CategoryId = c.ID " +
+                         " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
                          " where MONTH(a.CreateDate) = @month order by ID desc ";
                     }
                     using (MySqlCommand cmd = new MySqlCommand(sql, connection))
@@ -87,6 +90,7 @@ namespace web.Controllers
                                 {
                                     var article = new Article();
                                     article.ID = Convert.ToInt32(reader["ID"]);
+                                    article._count = Convert.ToInt32(reader["_count"] == DBNull.Value ? 0 : reader["_count"]);
                                     article.ArticleContent = reader["ArticleContent"].ToString();
                                     article.Caption = reader["Caption"].ToString();
                                     article.CategoryName = reader["CategoryName"].ToString();
@@ -144,9 +148,9 @@ namespace web.Controllers
             using (MySqlConnection connection = new MySqlConnection(myConnectionString))
             {
                 connection.Open();
-                using (MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) as Count, MONTH(CreateDate) as MonthID FROM webdb.article " +
-                    " WHERE YEAR(CreateDate) = YEAR(CURDATE()) " +
-                    " GROUP BY MONTH(CreateDate)", connection))
+                using (MySqlCommand cmd = new MySqlCommand("SELECT COUNT(*) as Count, MONTH(CreateDate) as MonthID, year(CreateDate) as Year FROM webdb.article" +
+                    " GROUP BY MONTH(CreateDate), YEAR(CreateDate) " +
+                    " ORDER BY YEAR(CreateDate) DESC, MONTH(CreateDate) DESC", connection))
                 {
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -158,6 +162,8 @@ namespace web.Controllers
                                 var categoryModel = new ArticleGroupByMonth();
                                 categoryModel.Count = Convert.ToInt32(reader.GetString("Count"));
                                 categoryModel.Month = Convert.ToInt32(reader.GetString("MonthID"));
+                                categoryModel.Year = Convert.ToInt32(reader.GetString("Year"));
+
                                 switch (categoryModel.Month)
                                 {
                                     case 1:
@@ -198,10 +204,9 @@ namespace web.Controllers
                                         break;
 
                                 }
-                                categoryModel.DisplayName = categoryModel.MonthName + "(" + categoryModel.Count + ")";
+                                categoryModel.DisplayName = categoryModel.MonthName + "-" + categoryModel.Year + " (" + categoryModel.Count + ")";
                                 categoryModel.Url = "/Home/Blog?Month=" + categoryModel.Month;
                                 categoryList.Add(categoryModel);
-
                             }
                         }
                         connection.Close();
