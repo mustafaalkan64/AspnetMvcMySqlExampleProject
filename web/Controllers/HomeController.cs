@@ -405,6 +405,124 @@ namespace web.Controllers
             return View(listArticle);
         }
 
+        public ActionResult Comments(int articleId = 0)
+        {
+            var commentList = new List<Comments>();
+            //Creating instance of DatabaseContext class  
+            using (var connection = new MySqlConnection(myConnectionString))
+            {
+                connection.Open();
+                using (MySqlCommand cmd = new MySqlCommand("select * from webdb.comments where articleId = @articleId and isaccepted = 1 order by ID desc ", connection))
+                {
+                    cmd.Parameters.AddWithValue("?articleId", articleId);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows == true)
+                        {
+                            while (reader.Read())
+                            {
+                                var comment = new Comments();
+                                comment.ID = Convert.ToInt32(reader["ID"]);
+                                comment.Comment = reader["comment"].ToString();
+                                comment.CommentByUserName = reader["commentbyusername"].ToString();
+                                comment.CreateDate = Convert.ToDateTime(reader["createdate"] == DBNull.Value ? DateTime.MinValue : reader["createdate"]);
+                                commentList.Add(comment);
+                            }
+                        }
+                    }
+                    cmd.Dispose();
+                }
+                connection.Close();
+                connection.Dispose();
+            }
+            return View(commentList);
+        }
+
+        public ActionResult PostComment(int articleId = 0)
+        {
+            var ip = GetUserIP();
+            var comment = new PostCommentModel();
+            comment.ArticleId = articleId;
+            //Creating instance of DatabaseContext class  
+            using (var connection = new MySqlConnection(myConnectionString))
+            {
+                connection.Open();
+                using (MySqlCommand cmd = new MySqlCommand("select * from webdb.member where IpAddress = @ip ", connection))
+                {
+                    cmd.Parameters.AddWithValue("?ip", ip);
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.HasRows == true)
+                        {
+                            while (reader.Read())
+                            {
+                                comment.UserName = reader["AdSoyad"].ToString();
+                                comment.Phone = reader["Mobil"].ToString();
+                            }
+                            ViewBag.HasUser = true;
+                        }
+                        else
+                        {
+                            ViewBag.HasUser = false;
+                        }
+                    }
+                    cmd.Dispose();
+                }
+                connection.Close();
+                connection.Dispose();
+            }
+            return View(comment);
+        }
+
+        [HttpPost]
+        public ActionResult PostComment(PostCommentModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var message = string.Join(" | ", ModelState.Values
+                                           .SelectMany(v => v.Errors)
+                                           .Select(e => e.ErrorMessage));
+
+                ModelState.AddModelError("", message);
+                return View(model);
+            }
+
+            model.Email.ToUpper().Replace("1=1", "");
+            model.Comment.ToUpper().Replace("1=1", "");
+
+            try
+            {
+                var ip = GetUserIP();
+                using (var conn = new MySqlConnection(myConnectionString))
+                {
+                    conn.Open();
+                    using (var comm = conn.CreateCommand())
+                    {
+                        comm.CommandText = "insert into webdb.comments(comment, commentbyusername, isaccepted, createdate, articleId, IpAddress, email) values(@comment, @commentbyusername, @isaccepted, @createdate, @articleId, @IpAddress, @email)";
+                        comm.Parameters.AddWithValue("?comment", model.Comment);
+                        comm.Parameters.AddWithValue("?isaccepted", false);
+                        comm.Parameters.AddWithValue("?createdate", DateTime.Now);
+                        comm.Parameters.AddWithValue("?articleId", model.ArticleId);
+                        comm.Parameters.AddWithValue("?IpAddress", ip);
+                        comm.Parameters.AddWithValue("?email", model.Email);
+                        comm.Parameters.AddWithValue("?commentbyusername", model.UserName);
+                        comm.ExecuteNonQuery();
+
+                        ViewBag.SuccessCreateComment = true;
+                        conn.Close();
+                        conn.Dispose();
+                        //return RedirectToAction("Index");
+                        return View(model);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
         public ActionResult RegisterUser()
         {
                 return View(new RegisterUserModel());

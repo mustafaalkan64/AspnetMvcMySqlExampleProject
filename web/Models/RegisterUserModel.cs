@@ -18,4 +18,21 @@ namespace web.Models
         [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Lütfen Geçerli Bir Telefon Numarası Format Giriniz")]
         public string Phone { get; set; }
     }
+
+    public class PostCommentModel
+    {
+        public int ArticleId { get; set; }
+        [Display(Name = "Ad Soyad")]
+        public string UserName { get; set; }
+        [Display(Name = "Telefon Numarası")]
+        public string Phone { get; set; }
+
+        [EmailAddress(ErrorMessage = "Email Formatı Yanlış")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Yorum Zorunludur")]
+        [Display(Name = "Yorum")]
+        [StringLength(250, ErrorMessage = "Yorum 500 Karakteri Geçemez")]
+        public string Comment { get; set; }
+    }
 }

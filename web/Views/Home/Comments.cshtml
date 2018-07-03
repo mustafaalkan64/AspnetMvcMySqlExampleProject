@@ -1,0 +1,28 @@
+﻿@model IEnumerable<web.Areas.admin.Models.Comments>
+@{ 
+    Layout = null;
+}
+
+<div class="response">
+    <h3>Yorumlar</h3>
+    @foreach (var item in Model)
+    {
+        <div class="media response-info">
+            <div class="media-left response-text-left">
+                @*<a href="#">
+                    <img class="media-object" src="images/t1.jpg" alt="">
+                </a>*@
+                <h5><a href="#">@item.CommentByUserName</a></h5>
+            </div>
+            <div class="media-body response-text-right">
+                <p>
+                    @item.Comment
+                </p>
+                <ul>
+                    <li>@item.CreateDate.ToString("dd.MM.yyyy HH:mm")</li>
+                </ul>
+            </div>
+            <div class="clearfix"> </div>
+        </div>
+    }
+</div>

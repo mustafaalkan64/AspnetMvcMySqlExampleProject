@@ -37,7 +37,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                             @if (Model.ID != 0)
                             {
                                 <div class="blog-left-left">
-                                    <p>Posted By <a href="#">Admin</a> &nbsp;&nbsp; @Model.CreateDate.ToString("dd.MM.yyyy HH:mm") &nbsp;&nbsp;</p>
+                                    <p><a href="#">Admin</a> Tarafından Gönderildi. &nbsp;&nbsp; @Model.CreateDate.ToString("dd.MM.yyyy HH:mm") &nbsp;&nbsp;</p>
                                     <a href="#"><img src="~/UploadedFiles/@Model.ArticleImage" alt="" /></a>
                                 </div>
                                 <div class="blog-left-right">
@@ -51,6 +51,15 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
                         </div>
                     </div>
+                    @Html.Action("Comments", new { articleId = Model.ID })
+                    @Html.Action("PostComment", new { articleId = Model.ID })
+                    @*<div class="opinion">
+                        <h3>Yorum Bırakın</h3>
+                        <form action="#" method="post">
+                            <textarea name="Message" placeholder="Message" required=""></textarea>
+                            <input type="submit" value="Gönder">
+                        </form>
+                    </div>*@
                 </div>
                 <div class="col-md-4 blog-top-right-grid">
                     <div class="Categories">

@@ -353,6 +353,8 @@
     <Content Include="Views\Home\RecentComments.cshtml" />
     <Content Include="Views\Home\ArticleList.cshtml" />
     <Content Include="Views\Home\BlogDetail.cshtml" />
+    <Content Include="Views\Home\Comments.cshtml" />
+    <Content Include="Views\Home\PostComment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
