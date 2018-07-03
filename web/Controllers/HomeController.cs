@@ -113,6 +113,54 @@ namespace web.Controllers
             }
         }
 
+        public ActionResult BlogDetail(int id = 0)
+        {
+            try
+            {
+                if (id == 0)
+                    return View(new Article());
+                //Creating instance of DatabaseContext class  
+                using (var connection = new MySqlConnection(myConnectionString))
+                {
+                    connection.Open();
+                    string sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl from webdb.article as a " +
+                        " join articleımages as aı on a.Id = aı.ArticleId " +
+                        " join category as c on a.CategoryId = c.ID where a.ID = @id";
+
+                    using (MySqlCommand cmd = new MySqlCommand(sql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("?id", id);
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows == true)
+                            {
+                                while (reader.Read())
+                                {
+                                    var article = new Article();
+                                    article.ID = Convert.ToInt32(reader["ID"]);
+                                    article.ArticleContent = reader["ArticleContent"].ToString();
+                                    article.Caption = reader["Caption"].ToString();
+                                    article.CategoryName = reader["CategoryName"].ToString();
+                                    article.ArticleImage = reader["imageurl"].ToString();
+                                    article.CreateDate = Convert.ToDateTime(reader["CreateDate"]);
+                                    article.UpdateDate = Convert.ToDateTime(reader["UpdateDate"] == DBNull.Value ? DateTime.MinValue : reader["UpdateDate"]);
+                                    return View(article);
+                                }
+                            }
+                        }
+                        cmd.Dispose();
+                    }
+                    connection.Close();
+                    connection.Dispose();
+                }
+                return View(new Article());
+            }
+            catch (MySqlException ex)
+            {
+                throw ex;
+            }
+        }
+
         public ActionResult BlogCategories()
         {
             using (MySqlConnection connection = new MySqlConnection(myConnectionString))

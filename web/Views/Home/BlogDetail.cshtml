@@ -1,0 +1,96 @@
+﻿
+@model web.Areas.admin.Models.Article
+
+@{
+    Layout = null;
+}
+
+<!--A Design by W3layouts
+Author: W3layout
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html lang="en">
+@Html.Partial("~/Views/Shared/_HeadPartial.cshtml")
+<body>
+    <!-- banner -->
+    <div class="banner">
+        @Html.Partial("~/Views/Shared/BannerHeader.cshtml")
+        <div class="wthree-banner-info">
+            <div class="container">
+                <h2>Blog</h2>
+            </div>
+        </div>
+    </div>
+    <!-- //banner -->
+    <!-- blog -->
+    <div class="blog">
+        <!-- container -->
+        <div class="container">
+            <div class="blog-top-grids">
+                <div class="col-md-8 blog-top-left-grid">
+                    <div class="left-blog">
+
+                        <div class="blog-left">
+                            @if (Model.ID != 0)
+                            {
+                                <div class="blog-left-left">
+                                    <p>Posted By <a href="#">Admin</a> &nbsp;&nbsp; @Model.CreateDate.ToString("dd.MM.yyyy HH:mm") &nbsp;&nbsp;</p>
+                                    <a href="#"><img src="~/UploadedFiles/@Model.ArticleImage" alt="" /></a>
+                                </div>
+                                <div class="blog-left-right">
+                                    <a href="#">@Model.Caption </a>
+                                    <p>
+                                        @Html.Raw(Model.ArticleContent)
+                                    </p>
+                                </div>
+                                <div class="clearfix"> </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 blog-top-right-grid">
+                    <div class="Categories">
+                        <h3>Kategoriler</h3>
+                        @Html.Action("BlogCategories")
+                    </div>
+                    <div class="Categories">
+                        <h3>Arşiv</h3>
+                        @Html.Action("BlogArchiev")
+                    </div>
+                </div>
+                <div class="clearfix"> </div>
+            </div>
+        </div>
+        <!-- //container -->
+    </div>
+    <!-- //blog -->
+    <!-- footer -->
+    @Html.Partial("~/Views/Shared/_Footer.cshtml")
+    <!-- //footer -->
+    <script src="~/js/SmoothScroll.min.js"></script>
+
+    <script type="text/javascript" src="~/js/move-top.js"></script>
+    <script type="text/javascript" src="~/js/easing.js"></script>
+    <!-- here stars scrolling icon -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            /*
+                var defaults = {
+                containerID: 'toTop', // fading element id
+                containerHoverID: 'toTopHover', // fading element hover id
+                scrollSpeed: 1200,
+                easingType: 'linear'
+                };
+            */
+
+            $().UItoTop({ easingType: 'easeOutQuart' });
+
+        });
+    </script>
+    <!-- //here ends scrolling icon -->
+</body>
+</html>
