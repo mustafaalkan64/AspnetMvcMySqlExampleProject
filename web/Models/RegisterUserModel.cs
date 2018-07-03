@@ -24,7 +24,7 @@ namespace web.Models
         public int ArticleId { get; set; }
         [Display(Name = "Ad Soyad")]
         public string UserName { get; set; }
-        [Display(Name = "Telefon Numarası")]
+        [Display(Name = "Telefon")]
         public string Phone { get; set; }
 
         [EmailAddress(ErrorMessage = "Email Formatı Yanlış")]

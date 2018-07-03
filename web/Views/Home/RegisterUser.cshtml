@@ -3,6 +3,9 @@
     Layout = null;
 }
 
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
@@ -12,7 +15,7 @@
         <hr />
 
         @{ if (ViewBag.SuccessRegisterUser == true)
-           {
+            {
                 <div class="form-group">
                     <div class="col-md-offset-2 col-md-10">
                         <div class="alert alert-success">

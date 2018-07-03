@@ -3,17 +3,20 @@
     Layout = null;
 }
 
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
+
 <div class="opinion">
 
     @if (ViewBag.SuccessCreateComment == true)
     {
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <div class="alert alert-success">
-                <strong>Tebrikler!</strong> Yorumunuzu Aldık! Yorumunuz Onaylandıktan Sonra Yorumunuzu Görebilirsiniz.
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="alert alert-success">
+                    <strong>Tebrikler!</strong> Yorumunuzu Aldık! Yorumunuz Onaylandıktan Sonra Yorumunuzu Görebilirsiniz.
+                </div>
             </div>
         </div>
-    </div>
     }
     else if (ViewBag.HasUser == false)
     {
@@ -74,6 +77,5 @@
 
 
 </div>
-<script src="~/Scripts/jquery.validate.min.js"></script>
 
 
