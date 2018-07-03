@@ -355,6 +355,7 @@
     <Content Include="Views\Home\BlogDetail.cshtml" />
     <Content Include="Views\Home\Comments.cshtml" />
     <Content Include="Views\Home\PostComment.cshtml" />
+    <Content Include="Views\Home\PostComment2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

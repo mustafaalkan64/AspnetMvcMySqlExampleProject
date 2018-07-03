@@ -4,8 +4,18 @@
 }
 
 <div class="opinion">
-    <h3>Yorum Bırakın</h3>
-    @if (ViewBag.HasUser == false)
+
+    @if (ViewBag.SuccessCreateComment == true)
+    {
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <div class="alert alert-success">
+                <strong>Tebrikler!</strong> Yorumunuzu Aldık! Yorumunuz Onaylandıktan Sonra Yorumunuzu Görebilirsiniz.
+            </div>
+        </div>
+    </div>
+    }
+    else if (ViewBag.HasUser == false)
     {
         <div class="alert alert-danger">
             Yorum Yapabilmek İçin Lütfen Öncelike <a href="/Home">Buradan</a> Üye Olmanız Gerekmektedir!
@@ -13,6 +23,7 @@
     }
     else
     {
+        <h3>Yorum Bırakın</h3>
         using (Html.BeginForm())
         {
             @Html.AntiForgeryToken()
@@ -55,7 +66,7 @@
 
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create" class="btn btn-default" />
+                    <input type="submit" value="Gönder" class="btn btn-default" />
                 </div>
             </div>
         }
@@ -63,5 +74,6 @@
 
 
 </div>
+<script src="~/Scripts/jquery.validate.min.js"></script>
 
 
