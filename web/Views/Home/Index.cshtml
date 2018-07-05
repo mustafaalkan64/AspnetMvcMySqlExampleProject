@@ -9,6 +9,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 }
 <!DOCTYPE html>
 <html lang="en">
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/jqueryval")
 @Html.Partial("~/Views/Shared/_HeadPartial.cshtml")
 <body>
     <!-- banner -->
@@ -45,7 +47,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                             <h3>BİREYSEL</h3>
                                             @*<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean et placerat leo, non condimentum justo.</p>*@
                                             <div class="w3ls-button">
-                                                <a href="#services">Kayıt Ol</a>
+                                                <a id="bireysel" href="#services">Kayıt Ol</a>
                                             </div>
                                         </div>
                                     </li>
@@ -54,7 +56,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                             <h3>İŞLETME</h3>
                                             @*<p>Fusce varius id lectus at cursus. Cras malesuada libero vitae semper lacinia. Ut dapibus, sem sed cursus</p>*@
                                             <div class="w3ls-button">
-                                                <a href="#services">Kayıt Ol</a>
+                                                <a id="isletme" href="#services">Kayıt Ol</a>
                                             </div>
                                         </div>
                                     </li>

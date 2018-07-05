@@ -134,6 +134,7 @@ namespace web.Controllers
                         cmd.Dispose();
                     }
                     connection.Close();
+                    connection.Dispose();
                 }
                 var blogModel = new BlogModel();
                 var pageList = new List<PageModel>();
@@ -148,8 +149,16 @@ namespace web.Controllers
                     pagemodel.DisplayName = i + 1;
                     pageList.Add(pagemodel);
                 }
-                blogModel.FirstPageUrl = pageList.First().Url;
-                blogModel.LastPageUrl = pageList.Last().Url;
+                if(pageList.Count > 0)
+                    blogModel.FirstPageUrl = pageList.First().Url;
+                else
+                    blogModel.FirstPageUrl = "/Home/Blog?CategoryId=" + CategoryId + "&Month=" + Month + "&Page=" + 0;
+
+                if (pageList.Count > 0)
+                    blogModel.LastPageUrl = pageList.Last().Url;
+                else
+                    blogModel.FirstPageUrl = "/Home/Blog?CategoryId=" + CategoryId + "&Month=" + Month + "&Page=" + 0;
+
                 blogModel.PageList = pageList;
                 return View(blogModel);
             }
@@ -465,7 +474,7 @@ namespace web.Controllers
                             while (reader.Read())
                             {
                                 var categoryModel = new Comments();
-                                categoryModel.CommentByUserName = reader.GetString("commentbyusername");
+                                categoryModel.CommentByUserName = reader.GetString("comment");
                                 categoryModel.Comment = reader.GetString("commentbyusername");
                                 categoryModel.CreateDate = Convert.ToDateTime(reader["createdate"] == DBNull.Value ? DateTime.MinValue : reader["createdate"]);
                                 commentList.Add(categoryModel);

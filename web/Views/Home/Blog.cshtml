@@ -50,25 +50,31 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                     </div>
                     <nav>
                         <ul class="pagination">
-                            <li>
-                                <a href="@Model.FirstPageUrl" aria-label="İlk">
-                                    <span aria-hidden="true">««</span>
-                                </a>
-                            </li>
+                            @{
+                                if (Model.PageList.Count > 0)
+                                {
+                                    <li>
+                                        <a href="@Model.FirstPageUrl" aria-label="İlk">
+                                            <span aria-hidden="true">««</span>
+                                        </a>
+                                    </li>
+                                }
+                            }
+
                             @foreach (var item in Model.PageList)
                             {
                                 <li class="@if (item.DisplayName == Model.ActivePage) { <text>active </text>} "><a href="@item.Url">@item.DisplayName</a></li>
                             }
-                            @*<li class="active"><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>*@
-                            <li>
-                                <a href="@Model.LastPageUrl" aria-label="Son">
-                                    <span aria-hidden="true">»»</span>
-                                </a>
-                            </li>
+
+                            @if (Model.PageList.Count > 0)
+                            {
+                                <li>
+                                    <a href="@Model.LastPageUrl" aria-label="İlk">
+                                        <span aria-hidden="true">»»</span>
+                                    </a>
+                                </li>
+                            }
+
                         </ul>
                     </nav>
                 </div>
