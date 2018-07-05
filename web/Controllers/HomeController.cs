@@ -21,12 +21,12 @@ namespace web.Controllers
                 {
                     connection.Open();
                     var ip = GetUserIP();
-                    using (MySqlCommand cmd = new MySqlCommand("select AdSoyad from webdb.member where IpAddress='"+ip+"' LIMIT 1;", connection))
+                    using (MySqlCommand cmd = new MySqlCommand("select AdSoyad from webdb.member where IpAddress='" + ip + "' LIMIT 1;", connection))
                     {
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
                             var nameSurname = "";
-                            if(reader.HasRows == true)
+                            if (reader.HasRows == true)
                             {
                                 while (reader.Read())
                                 {
@@ -48,7 +48,118 @@ namespace web.Controllers
             }
         }
 
-        public ActionResult Blog(int CategoryId = 0, int Month = 0)
+        [OutputCache(Duration = 60)]
+        public ActionResult Blog(int CategoryId = 0, int Month = 0, int Page = 0)
+        {
+            try
+            {
+                var pagesize = 5;
+                var limit = pagesize;
+                var offset = Page * pagesize;
+                var listArticle = new List<Article>();
+                var pagecount = 0;
+                //Creating instance of DatabaseContext class  
+                using (var connection = new MySqlConnection(myConnectionString))
+                {
+                    connection.Open();
+                    string sql = String.Empty;
+                    if(CategoryId == 0 && Month == 0)
+                    {
+                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
+                        " join articleımages as aı on a.Id = aı.ArticleId " +
+                        " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
+                        " join category as c on a.CategoryId = c.ID order by a.ID desc ";
+
+                    }
+
+                    else if(CategoryId > 0)
+                    {
+                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
+                         " join articleımages as aı on a.Id = aı.ArticleId " +
+                         " join category as c on a.CategoryId = c.ID " +
+                         " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
+                         " where c.ID = @categoryId order by a.ID desc ";
+                    }
+                    else if (Month > 0)
+                    {
+                        sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
+                         " join articleımages as aı on a.Id = aı.ArticleId " +
+                         " join category as c on a.CategoryId = c.ID " +
+                         " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
+                         " where MONTH(a.CreateDate) = @month order by a.ID desc ";
+                    }
+
+                    var articlelistsql = sql + " limit " + limit + " offset " + offset;
+                    var pagingsql = "select count(*) as pagingcount from (" + sql + ") as result";
+                    using (MySqlCommand cmd = new MySqlCommand(articlelistsql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("?categoryId", CategoryId);
+                        cmd.Parameters.AddWithValue("?month", Month);
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows == true)
+                            {
+                                while (reader.Read())
+                                {
+                                    var article = new Article();
+                                    article.ID = Convert.ToInt32(reader["ID"]);
+                                    article._count = Convert.ToInt32(reader["_count"] == DBNull.Value ? 0 : reader["_count"]);
+                                    article.ArticleContent = reader["ArticleContent"].ToString();
+                                    article.Caption = reader["Caption"].ToString();
+                                    article.CategoryName = reader["CategoryName"].ToString();
+                                    article.ArticleImage = reader["imageurl"].ToString();
+                                    article.CreateDate = Convert.ToDateTime(reader["CreateDate"]);
+                                    article.UpdateDate = Convert.ToDateTime(reader["UpdateDate"] == DBNull.Value ? DateTime.MinValue : reader["UpdateDate"]);
+                                    listArticle.Add(article);
+                                }                             
+                            }
+                        }
+                        cmd.Dispose();
+                    }
+
+                    using (MySqlCommand cmd = new MySqlCommand(pagingsql, connection))
+                    {
+                        cmd.Parameters.AddWithValue("?categoryId", CategoryId);
+                        cmd.Parameters.AddWithValue("?month", Month);
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows == true)
+                            {
+                                while (reader.Read())
+                                {
+                                    pagecount = Convert.ToInt32(reader["pagingcount"]);
+                                }
+                            }
+                        }
+                        cmd.Dispose();
+                    }
+                    connection.Close();
+                }
+                var blogModel = new BlogModel();
+                var pageList = new List<PageModel>();
+                blogModel.ArticleList = listArticle;
+                blogModel.ActivePage = Page + 1;
+                blogModel.PageCount = (pagecount / pagesize) + (pagecount % pagesize > 0 ? 1 : 0);
+
+                for(int i = 0; i < blogModel.PageCount; i++)
+                {
+                    var pagemodel = new PageModel();
+                    pagemodel.Url = "/Home/Blog?CategoryId=" + CategoryId + "&Month=" + Month + "&Page=" + i;
+                    pagemodel.DisplayName = i + 1;
+                    pageList.Add(pagemodel);
+                }
+                blogModel.FirstPageUrl = pageList.First().Url;
+                blogModel.LastPageUrl = pageList.Last().Url;
+                blogModel.PageList = pageList;
+                return View(blogModel);
+            }
+            catch (MySqlException ex)
+            {
+                throw ex;
+            }
+        }
+
+        public ActionResult BlogPager(int CategoryId = 0, int Month = 0)
         {
             try
             {
@@ -62,7 +173,7 @@ namespace web.Controllers
                         " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
                         " join category as c on a.CategoryId = c.ID order by ID desc ";
 
-                    if(CategoryId > 0)
+                    if (CategoryId > 0)
                     {
                         sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
                          " join articleımages as aı on a.Id = aı.ArticleId " +
