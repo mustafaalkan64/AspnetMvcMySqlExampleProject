@@ -27,12 +27,68 @@ namespace web.Areas.admin.Controllers
             try
             {
                 var listArticle = new List<Article>();
-                //Creating instance of DatabaseContext class  
+                //Creating instance of DatabaseContext class 
+                var sql = "select a.*, c.Name as CategoryName from webdb.article as a " +
+                        "join category as c on a.CategoryId = c.ID ";
+
+                var countsql = "select count(*) as count from webdb.article as a " +
+                        "join category as c on a.CategoryId = c.ID ";
+
+                int recordsTotal = 0;
                 using (var connection = new MySqlConnection(myConnectionString))
                 {
                     connection.Open();
-                    using (MySqlCommand cmd = new MySqlCommand("select a.*, c.Name as CategoryName from webdb.article as a "+
-                        "join category as c on a.CategoryId = c.ID order by ID desc", connection))
+                    using (MySqlCommand cmd = new MySqlCommand(countsql, connection))
+                    {
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                recordsTotal = Convert.ToInt32(reader[0]);
+                            }
+                        }
+                        cmd.Dispose();
+                    }
+                    connection.Close();
+                    connection.Dispose();
+                }
+                var _listarticle = listArticle.AsEnumerable();
+                var draw = Request.Form.GetValues("draw").FirstOrDefault();
+                var start = Request.Form.GetValues("start").FirstOrDefault();
+                var length = Request.Form.GetValues("length").FirstOrDefault();
+                var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
+                var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
+                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
+
+
+                //Paging Size (10,20,50,100)    
+                int pageSize = length != null ? Convert.ToInt32(length) : 0;
+                int skip = start != null ? Convert.ToInt32(start) : 0;
+                
+
+
+                //Search    
+                if (!string.IsNullOrEmpty(searchValue))
+                {
+                    sql += " WHERE c.Name LIKE '%" + searchValue + "%' OR a.ArticleContent LIKE '%" + searchValue + "%' OR a.Caption LIKE '%" + searchValue + "%' ";
+                    //_listarticle = _listarticle.Where(x => x.Caption.Contains(searchValue) || x.ArticleContent.Contains(searchValue) || x.CategoryName.Contains(searchValue));
+                }
+
+                //Sorting    
+                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
+                {
+                    sql += " ORDER BY " + sortColumn + " " + sortColumnDir;
+                    //_listarticle = _listarticle.OrderBy(sortColumn + " " + sortColumnDir);                    
+                }
+
+                sql += " LIMIT " + pageSize + " OFFSET " + skip;
+                //Paging     
+                //var data = _listarticle.Skip(skip).Take(pageSize).ToList();
+
+                using (var connection = new MySqlConnection(myConnectionString))
+                {
+                    connection.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(sql, connection))
                     {
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
@@ -55,41 +111,10 @@ namespace web.Areas.admin.Controllers
                     }
                     connection.Close();
                 }
-                var _listarticle = listArticle.AsEnumerable();
-                var draw = Request.Form.GetValues("draw").FirstOrDefault();
-                var start = Request.Form.GetValues("start").FirstOrDefault();
-                var length = Request.Form.GetValues("length").FirstOrDefault();
-                var sortColumn = Request.Form.GetValues("columns[" + Request.Form.GetValues("order[0][column]").FirstOrDefault() + "][name]").FirstOrDefault();
-                var sortColumnDir = Request.Form.GetValues("order[0][dir]").FirstOrDefault();
-                var searchValue = Request.Form.GetValues("search[value]").FirstOrDefault();
 
-
-                //Paging Size (10,20,50,100)    
-                int pageSize = length != null ? Convert.ToInt32(length) : 0;
-                int skip = start != null ? Convert.ToInt32(start) : 0;
-                int recordsTotal = 0;
-
-                //Sorting    
-                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDir)))
-                {
-                    _listarticle = _listarticle.OrderBy(sortColumn + " " + sortColumnDir);
-                }
-
-                
-                //else
-                //{
-                //    _listarticle = _listarticle.OrderByDescending(x => x.ID);
-                //}
-                //Search    
-                if (!string.IsNullOrEmpty(searchValue))
-                {
-                    _listarticle = _listarticle.Where(x => x.Caption.Contains(searchValue) || x.ArticleContent.Contains(searchValue) || x.CategoryName.Contains(searchValue));
-                }
-
-                //total number of rows count     
-                recordsTotal = _listarticle.Count();
                 //Paging     
-                var data = _listarticle.Skip(skip).Take(pageSize).ToList();
+                var data = listArticle.AsEnumerable();
+
                 //Returning Json Data    
                 return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });
             }
