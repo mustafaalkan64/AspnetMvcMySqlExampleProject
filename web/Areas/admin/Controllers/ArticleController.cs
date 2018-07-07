@@ -35,23 +35,7 @@ namespace web.Areas.admin.Controllers
                         "join category as c on a.CategoryId = c.ID ";
 
                 int recordsTotal = 0;
-                using (var connection = new MySqlConnection(myConnectionString))
-                {
-                    connection.Open();
-                    using (MySqlCommand cmd = new MySqlCommand(countsql, connection))
-                    {
-                        using (MySqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            if (reader.Read())
-                            {
-                                recordsTotal = Convert.ToInt32(reader[0]);
-                            }
-                        }
-                        cmd.Dispose();
-                    }
-                    connection.Close();
-                    connection.Dispose();
-                }
+                
 
                 var draw = Request.Form.GetValues("draw").FirstOrDefault();
                 var start = Request.Form.GetValues("start").FirstOrDefault();
@@ -70,6 +54,7 @@ namespace web.Areas.admin.Controllers
                 //Search    
                 if (!string.IsNullOrEmpty(searchValue))
                 {
+                    countsql += " WHERE c.Name LIKE '%" + searchValue + "%' OR a.ArticleContent LIKE '%" + searchValue + "%' OR a.Caption LIKE '%" + searchValue + "%' ";
                     sql += " WHERE c.Name LIKE '%" + searchValue + "%' OR a.ArticleContent LIKE '%" + searchValue + "%' OR a.Caption LIKE '%" + searchValue + "%' ";
                     //_listarticle = _listarticle.Where(x => x.Caption.Contains(searchValue) || x.ArticleContent.Contains(searchValue) || x.CategoryName.Contains(searchValue));
                 }
@@ -81,9 +66,8 @@ namespace web.Areas.admin.Controllers
                     //_listarticle = _listarticle.OrderBy(sortColumn + " " + sortColumnDir);                    
                 }
 
-                sql += " LIMIT " + pageSize + " OFFSET " + skip;
                 //Paging     
-                //var data = _listarticle.Skip(skip).Take(pageSize).ToList();
+                sql += " LIMIT " + pageSize + " OFFSET " + skip;
 
                 using (var connection = new MySqlConnection(myConnectionString))
                 {
@@ -113,7 +97,25 @@ namespace web.Areas.admin.Controllers
                     connection.Dispose();
                 }
 
-                //Paging     
+                using (var connection = new MySqlConnection(myConnectionString))
+                {
+                    connection.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(countsql, connection))
+                    {
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            if (reader.Read())
+                            {
+                                recordsTotal = Convert.ToInt32(reader[0]);
+                            }
+                        }
+                        cmd.Dispose();
+                    }
+                    connection.Close();
+                    connection.Dispose();
+                }
+
+                // Get Article List
                 var data = listArticle.AsEnumerable();
 
                 //Returning Json Data    
