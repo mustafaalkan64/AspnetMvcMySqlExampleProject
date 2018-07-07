@@ -52,7 +52,7 @@ namespace web.Areas.admin.Controllers
                     connection.Close();
                     connection.Dispose();
                 }
-                var _listarticle = listArticle.AsEnumerable();
+
                 var draw = Request.Form.GetValues("draw").FirstOrDefault();
                 var start = Request.Form.GetValues("start").FirstOrDefault();
                 var length = Request.Form.GetValues("length").FirstOrDefault();
@@ -110,6 +110,7 @@ namespace web.Areas.admin.Controllers
                         cmd.Dispose();
                     }
                     connection.Close();
+                    connection.Dispose();
                 }
 
                 //Paging     
