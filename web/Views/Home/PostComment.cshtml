@@ -20,15 +20,18 @@
     }
     else if (ViewBag.HasUser == false)
     {
-        <div class="alert alert-danger">
-            Yorum Yapabilmek İçin Lütfen Öncelike <a href="/Home">Buradan</a> Üye Olmanız Gerekmektedir!
+        <div class="form-group">
+            <div class="col-md-12">
+                <div class="alert alert-warning">
+                    Yorum Yapabilmek İçin Lütfen Öncelike <a href="/Home">Buradan</a> Üye Olmanız Gerekmektedir!
+                </div>
+            </div>
         </div>
+
     }
     else if (ViewBag.IsBlocked == true)
     {
-        @*<div class="alert alert-danger">
-            Yorum Yapabilmek İçin Lütfen Öncelike <a href="/Home">Buradan</a> Üye Olmanız Gerekmektedir!
-        </div>*@
+
         <div class="form-group">
             <div class="col-md-12">
                 <div class="alert alert-danger">
