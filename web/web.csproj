@@ -192,6 +192,8 @@
     <Compile Include="Areas\admin\Controllers\ArticleController.cs" />
     <Compile Include="Areas\admin\Controllers\CategoryController.cs" />
     <Compile Include="Areas\admin\Controllers\JsonResultModel.cs" />
+    <Compile Include="Areas\admin\Controllers\MemberController.cs" />
+    <Compile Include="Areas\admin\Models\Member.cs" />
     <Compile Include="Areas\admin\Models\Comments.cs" />
     <Compile Include="Areas\admin\Models\Category.cs" />
     <Compile Include="Areas\admin\Models\Article.cs" />
@@ -297,6 +299,8 @@
     <Content Include="Areas\admin\Views\Category\Edit.cshtml" />
     <Content Include="Areas\admin\Views\Category\Create.cshtml" />
     <Content Include="Areas\admin\Views\Category\Index.cshtml" />
+    <Content Include="Areas\admin\Views\_ViewStart.cshtml" />
+    <Content Include="Areas\admin\Views\Member\Index.cshtml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />

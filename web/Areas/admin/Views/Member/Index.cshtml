@@ -1,0 +1,196 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/admin/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdn.datatables.net/responsive/2.1.1/css/responsive.bootstrap.min.css" rel="stylesheet" />
+
+<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.15/js/dataTables.bootstrap4.min.js "></script>
+
+
+<h2>Yorumlar</h2>
+<br />
+<div class="container">
+    @*<div class="form-group">
+            <div class="col-md-10" style="margin-bottom:15px;">
+                <a class="btn btn-primary" href="/admin/Comments/Create">Yeni Makale</a>
+            </div>
+        </div>*@
+    <div class="form-group">
+        <div style="width:100%; margin:0 auto">
+            <table id="demoGrid" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>İsim Soyisim</th>
+                        <th>Ip Adresi</th>
+                        <th>Mobil</th>
+                        <th>Üye Tipi</th>
+                        <th>Oluşturma Tarihi</th>
+                        <th>Blok</th>
+                        <th></th>
+                        <th>Kullanıcı Yorumları</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script type="text/javascript">
+        var table = $("#demoGrid").DataTable({
+
+            "processing": true, // for show progress bar
+            "serverSide": true, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+            "pageLength": 5,
+
+            "ajax": {
+                "url": "/Member/LoadData",
+                "type": "POST",
+                "datatype": "json"
+            },
+
+            "columnDefs":
+                [
+                    //{
+                    //    "targets": [0],
+                    //    "visible": false,
+                    //    "searchable": false
+                    //},
+                    {
+                        "targets": [4],
+                        "searchable": false,
+                        "orderable": false
+                    }
+                ],
+            "order": [[0, "desc"]],
+            "columns": [
+                { "data": "ID", "name": "ID", "autoWidth": true },
+                { "data": "AdSoyad", "name": "AdSoyad", "autoWidth": true, "sortable": true },
+                { "data": "IpAddress", "name": "IpAddress", "autoWidth": true, "sortable": true },
+                { "data": "Mobil", "name": "Mobil", "autoWidth": true, "sortable": true },
+                { "data": "MemberType", "name": "MemberType", "autoWidth": true, "sortable": true },
+                {
+                    "title": "Oluş. Tarihi",
+                    "data": "CreateDate",
+                    "type": "date ",
+                    "render": function (value) {
+                        if (value === null) return "";
+
+                        var pattern = /Date\(([^)]+)\)/;
+                        var results = pattern.exec(value);
+                        var dt = new Date(parseFloat(results[1]));
+
+                        return dt.getDate() + "." + (dt.getMonth() + 1) + "." + dt.getFullYear() + "-" + dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+                    },
+                    "searchable": true
+                },
+                {
+                    data: "IsBlocked", "bSearchable": false,
+                    bSortable: false,
+                    mRender: function (data, type, full) {
+                        if (data == true) {
+                            return '<span style=\"color:red\">Bloklu</span>';
+                        }
+                        else {
+                            return '<span style=\"color:green\">Yorum Yapabilir</span>';
+                        }
+                        //+ '<input type="button" class="DetaisEmployee btn btn-default btn-success" value="Detaylar" onclick="ViewRamakkalaDetail(' + data + ')" />';
+                        //+ '&nbsp;&nbsp;<input type="button" class="deleteEmployee btn btn-default btn-danger" value="Delete" onclick="DeleteEmployee(' + data + ')" />';
+                    }
+                },
+                {
+                    data: "ID", "bSearchable": false,
+                    bSortable: false,
+                    mRender: function (data, type, full) {
+
+                        if (full.IsBlocked == false) {
+                            return '<input type="button" class="btn btn-primary btn-primary" value="Blokla" onclick="Block(' + data + ')" />';
+                        }
+                        else {
+                            return '<input type="button" class="btn btn-primary btn-danger" value="Bloğu Kaldır" onclick="UnBlock(' + data + ')" />';
+                        }
+
+                    }
+                },
+                {
+                    "render": function (data, type, full, meta) { return '<a class="btn btn-info" href="/admin/Comments?MemberId=' + full.ID + '"> Yorumlar </a>'; }
+                },
+
+            ]
+        });
+
+        function UnBlock(id) {
+
+            var r = confirm("Blok Kaldırılsın mı?");
+            if (r == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("UnBlock", "Member")",
+                    data: "{ id:"  + id + "}",
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.Success) {
+                            alert(data.Message);
+                            table.ajax.reload();
+                        }
+                        else {
+                            alert(data.Message);
+                        }
+                    },
+                    error: function () {
+                        alert('İşlem Sırasında Hata ile Karşılaşıldı!');
+
+                        //$("#ErrorMsg").text("İşlem Sırasında Hata Oluştu!");
+                        //$('#myModal').modal("show");
+                    }
+                });
+            }
+
+    }
+
+
+    function Block(id) {
+
+            var r = confirm("Kullanıcıyı Bloklamaka İstediğinizden Emin misiniz?");
+            if (r == true) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("Block", "Member")",
+                    data: "{ id:"  + id + "}",
+                    dataType: "json",
+                    contentType: 'application/json; charset=utf-8',
+                    success: function (data) {
+                        if (data.Success) {
+                            alert(data.Message);
+                            table.ajax.reload();
+                        }
+                        else {
+                            alert(data.Message);
+                        }
+                    },
+                    error: function () {
+                        alert('İşlem Sırasında Hata ile Karşılaşıldı!');
+
+                        //$("#ErrorMsg").text("İşlem Sırasında Hata Oluştu!");
+                        //$('#myModal').modal("show");
+                    }
+                });
+            }
+
+        }
+
+    </script>
+
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

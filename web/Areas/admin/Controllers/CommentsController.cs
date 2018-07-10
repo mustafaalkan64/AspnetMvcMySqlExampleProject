@@ -138,27 +138,23 @@ namespace web.Areas.admin.Controllers
                         }
                         cmd.Dispose();
                     }
-                    connection.Close();
-                    connection.Dispose();
-                }
 
-                using (var connection = new MySqlConnection(myConnectionString))
-                {
-                    connection.Open();
-                    using (MySqlCommand cmd = new MySqlCommand(countsql, connection))
+                    using (MySqlCommand cmdcount = new MySqlCommand(countsql, connection))
                     {
-                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        using (MySqlDataReader reader = cmdcount.ExecuteReader())
                         {
                             if (reader.Read())
                             {
                                 recordsTotal = Convert.ToInt32(reader[0]);
                             }
                         }
-                        cmd.Dispose();
+                        cmdcount.Dispose();
                     }
+
                     connection.Close();
                     connection.Dispose();
                 }
+
                 var data = listArticle.AsEnumerable();
                 //Returning Json Data    
                 return Json(new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data });

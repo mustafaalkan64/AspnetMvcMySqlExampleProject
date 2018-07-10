@@ -648,7 +648,10 @@ namespace web.Controllers
                 return View(new RegisterUserModel());
         }
 
+
         [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
         public ActionResult RegisterUser(RegisterUserModel model)
         {
             if (!ModelState.IsValid)
@@ -674,16 +677,19 @@ namespace web.Controllers
                     conn.Open();
                     using (var comm = conn.CreateCommand())
                     {
-                        comm.CommandText = "insert into webdb.member(Mobil, AdSoyad, IpAddress) values(@phone, @adsoyad, @ipaddress)";
+                        comm.CommandText = "insert into webdb.member(Mobil, AdSoyad, IpAddress, CreateDate, IsBlocked) values(@phone, @adsoyad, @ipaddress, @createdate, @isblocked)";
                         comm.Parameters.AddWithValue("?phone", model.Phone);
                         comm.Parameters.AddWithValue("?adsoyad", model.NameSurname);
                         comm.Parameters.AddWithValue("?ipaddress", ip);
+                        comm.Parameters.AddWithValue("?createdate", DateTime.Now);
+                        comm.Parameters.AddWithValue("?isblocked", false);
                         comm.ExecuteNonQuery();
-                        conn.Close();
-                        ViewBag.SuccessRegisterUser = true;
+
+                        comm.Dispose();
                         conn.Close();
                         conn.Dispose();
                         //return RedirectToAction("Index");
+                        ViewBag.SuccessRegisterUser = true;
                         return View(model);
                     }
                 }
