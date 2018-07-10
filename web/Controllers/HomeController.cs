@@ -675,8 +675,6 @@ namespace web.Controllers
             model.NameSurname.ToUpper().Replace("1=1", "");
             model.Phone.ToUpper().Replace("1=1", "");
             
-
-            
             try
             {
                 var ip = GetUserIP();
@@ -685,12 +683,14 @@ namespace web.Controllers
                     conn.Open();
                     using (var comm = conn.CreateCommand())
                     {
-                        comm.CommandText = "insert into webdb.member(Mobil, AdSoyad, IpAddress, CreateDate, IsBlocked) values(@phone, @adsoyad, @ipaddress, @createdate, @isblocked)";
+                        comm.CommandText = "insert into webdb.member(Mobil, AdSoyad, IpAddress, CreateDate, IsBlocked, MemberType) values(@phone, @adsoyad, @ipaddress, @createdate, @isblocked, @membertype)";
                         comm.Parameters.AddWithValue("?phone", model.Phone);
                         comm.Parameters.AddWithValue("?adsoyad", model.NameSurname);
                         comm.Parameters.AddWithValue("?ipaddress", ip);
                         comm.Parameters.AddWithValue("?createdate", DateTime.Now);
                         comm.Parameters.AddWithValue("?isblocked", false);
+                        comm.Parameters.AddWithValue("?membertype", model.MemberType);
+
                         comm.ExecuteNonQuery();
 
                         comm.Dispose();

@@ -17,6 +17,8 @@ namespace web.Models
         [Display(Name = "Telefon Numarası")]
         [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Lütfen Geçerli Bir Telefon Numarası Format Giriniz")]
         public string Phone { get; set; }
+
+        public string MemberType { get; set; }
     }
 
     public class PostCommentModel

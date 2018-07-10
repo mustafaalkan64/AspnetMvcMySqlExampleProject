@@ -75,6 +75,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                         </div>
                         <div class="clearfix"> </div>
                         <script>
+
                             // You can also use "$(window).load(function() {"
                             $(function ($) {
                                 // Slideshow 4
@@ -91,6 +92,18 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                         $('.events').append("<li>after event fired.</li>");
                                     }
                                 });
+
+                                $("#bireysel").click(function () {
+                                    usertype = 'bireysel';
+                                    $("#MemberType").val('Bireysel');
+                                });
+
+                                $("#isletme").click(function () {
+                                    usertype = 'isletme';
+                                    $("#MemberType").val('İşletme');
+                                });
+
+                                
 
                             });
                         </script>
