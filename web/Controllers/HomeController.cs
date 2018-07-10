@@ -698,7 +698,8 @@ namespace web.Controllers
                         conn.Dispose();
                         //return RedirectToAction("Index");
                         ViewBag.SuccessRegisterUser = true;
-                        return View(model);
+                        //return View("Index", model);
+                        return RedirectToAction("Index", "Home", new { area = "" });
                     }
                 }
             }

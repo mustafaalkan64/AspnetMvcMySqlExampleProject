@@ -6,7 +6,7 @@
 @*@Scripts.Render("~/bundles/jquery")
 @Scripts.Render("~/bundles/jqueryval")*@
 
-@using (Html.BeginForm())
+@using (Html.BeginForm(new { @id = "registeruser" }))
 {
     @Html.AntiForgeryToken()
 
@@ -63,3 +63,21 @@
 
     </div>
 }
+
+@*<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#registeruser").submit(function (e) {
+            window.location.replace("http://stackoverflow.com");
+            //alert();
+            //var option = $(this).attr("option");
+            //if (option) {
+            //    e.preventDefault();
+            //    var currentUrl = $(this).attr("action");
+            //    $(this).attr('action', currentUrl + "/" + option).submit();
+            //}
+        });
+
+    });
+    
+</script>*@
