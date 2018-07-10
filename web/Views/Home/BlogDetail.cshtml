@@ -53,15 +53,16 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 
                         </div>
                     </div>
-                    @Html.Action("Comments", new { articleId = Model.ID })
                     @Html.Action("PostComment", new { articleId = Model.ID })
+                    @Html.Action("Comments", new { articleId = Model.ID })
+
                     @*<div class="opinion">
-                            <h3>Yorum Bırakın</h3>
-                            <form action="#" method="post">
-                                <textarea name="Message" placeholder="Message" required=""></textarea>
-                                <input type="submit" value="Gönder">
-                            </form>
-                        </div>*@
+            <h3>Yorum Bırakın</h3>
+            <form action="#" method="post">
+                <textarea name="Message" placeholder="Message" required=""></textarea>
+                <input type="submit" value="Gönder">
+            </form>
+        </div>*@
                 </div>
                 <div class="col-md-4 blog-top-right-grid">
                     <div class="Categories">
