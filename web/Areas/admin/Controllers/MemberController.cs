@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -8,9 +9,12 @@ using web.Areas.admin.Models;
 
 namespace web.Areas.admin.Controllers
 {
+    [Authorize]
     public class MemberController : Controller
     {
-        private readonly string myConnectionString = @"Server=localhost;Port=3306;Database=webdb;Uid=root;Pwd=Malkan06*-fb-;";
+        private readonly string myConnectionString = ConfigurationManager.AppSettings["MySqlConnectionString"];
+
+        //private readonly string myConnectionString = @"Server=localhost;Port=3306;Database=webdb;Uid=root;Pwd=Malkan06*-fb-;";
         // GET: admin/Member
         public ActionResult Index()
         {
@@ -131,7 +135,7 @@ namespace web.Areas.admin.Controllers
                     return Json(new JsonResultModel
                     {
                         Success = false,
-                        Message = "Makale Bulunamadı"
+                        Message = "Üye Bulunamadı"
                     });
                 }
 
@@ -173,7 +177,7 @@ namespace web.Areas.admin.Controllers
                     return Json(new JsonResultModel
                     {
                         Success = false,
-                        Message = "Kullanıcı Bloğu Kaldırıldı!"
+                        Message = "Üye Bulunamadı!"
                     });
                 }
 
@@ -193,7 +197,7 @@ namespace web.Areas.admin.Controllers
                     return Json(new JsonResultModel
                     {
                         Success = true,
-                        Message = "Onaylandı!"
+                        Message = "Kullanıcı Bloğu Kaldırıldı."
                     });
 
                 }

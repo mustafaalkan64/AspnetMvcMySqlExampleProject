@@ -6,12 +6,13 @@ using System.Web;
 using System.Web.Mvc;
 using web.Areas.admin.Models;
 using System.Web.Security;
+using System.Configuration;
 
 namespace web.Areas.admin.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly string myConnectionString = @"Server=localhost;Port=3306;Database=webdb;Uid=root;Pwd=Malkan06*-fb-;";
+        private readonly string myConnectionString = ConfigurationManager.AppSettings["MySqlConnectionString"];
         // GET: admin/Account
         public ActionResult Login()
         {
@@ -33,6 +34,7 @@ namespace web.Areas.admin.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Login(LoginModel model)
         {
             if (!ModelState.IsValid)

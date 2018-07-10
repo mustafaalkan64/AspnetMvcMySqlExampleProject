@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -12,7 +13,7 @@ namespace web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly string myConnectionString = "Server=localhost;Port=3306;Database=webdb;Uid=root;Pwd=Malkan06*-fb-;";
+        private readonly string myConnectionString = ConfigurationManager.AppSettings["MySqlConnectionString"];
         public ActionResult Index()
         {
             try
@@ -576,6 +577,12 @@ namespace web.Controllers
                         {
                             while (reader.Read())
                             {
+                                comment.IsBlocked = Convert.ToBoolean(reader["IsBlocked"]);
+                                if(comment.IsBlocked)
+                                {
+                                    ViewBag.IsBlocked = true;
+                                    return View(comment);
+                                }
                                 comment.UserName = reader["AdSoyad"].ToString();
                                 comment.Phone = reader["Mobil"].ToString();
                             }
@@ -595,6 +602,7 @@ namespace web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult PostComment(PostCommentModel model)
         {
             if (!ModelState.IsValid)

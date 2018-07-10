@@ -34,5 +34,7 @@ namespace web.Models
         [Display(Name = "Yorum")]
         [StringLength(250, ErrorMessage = "Yorum 500 Karakteri Geçemez")]
         public string Comment { get; set; }
+
+        public bool IsBlocked { get; set; }
     }
 }

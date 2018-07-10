@@ -6,13 +6,14 @@ using System.Web;
 using System.Web.Mvc;
 using System.Linq.Dynamic;
 using web.Areas.admin.Models;
+using System.Configuration;
 
 namespace web.Areas.admin.Controllers
 {
     [Authorize]
     public class CategoryController : Controller
     {
-        private readonly string myConnectionString = @"Server=localhost;Port=3306;Database=webdb;Uid=root;Pwd=Malkan06*-fb-;";
+        private readonly string myConnectionString = ConfigurationManager.AppSettings["MySqlConnectionString"];
         // GET: admin/Category
         public ActionResult Index()
         {

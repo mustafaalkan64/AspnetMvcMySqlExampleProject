@@ -8,13 +8,14 @@ using System.Web;
 using System.Web.Mvc;
 using DataTables.AspNet.Mvc5;
 using web.Areas.admin.Models;
+using System.Configuration;
 
 namespace web.Areas.admin.Controllers
 {
     [Authorize]
     public class ArticleController : Controller
     {
-        private readonly string myConnectionString = @"Server=localhost;Port=3306;Database=webdb;Uid=root;Pwd=Malkan06*-fb-;";
+        private readonly string myConnectionString = ConfigurationManager.AppSettings["MySqlConnectionString"];
 
         // GET: admin/Article
         public ActionResult Index()
