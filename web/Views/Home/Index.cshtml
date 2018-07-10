@@ -103,7 +103,12 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                                     $("#MemberType").val('İşletme');
                                 });
 
-                                
+                                @{ 
+                                    if(ViewBag.SuccessRegister == "SuccessRegister" )
+                                    {
+                                        <text>alert("Tebrikler Başarıyla Üye Oldunuz!")</text>
+                                    }
+                                 }
 
                             });
                         </script>

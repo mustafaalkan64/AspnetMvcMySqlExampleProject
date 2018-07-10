@@ -14,7 +14,7 @@ namespace web.Controllers
     public class HomeController : Controller
     {
         private readonly string myConnectionString = ConfigurationManager.AppSettings["MySqlConnectionString"];
-        public ActionResult Index()
+        public ActionResult Index(string status = "")
         {
             try
             {
@@ -22,6 +22,7 @@ namespace web.Controllers
                 {
                     connection.Open();
                     var ip = GetUserIP();
+                    ViewBag.SuccessRegister = status;
                     using (MySqlCommand cmd = new MySqlCommand("select AdSoyad from webdb.member where IpAddress='" + ip + "' LIMIT 1;", connection))
                     {
                         using (MySqlDataReader reader = cmd.ExecuteReader())
@@ -699,7 +700,7 @@ namespace web.Controllers
                         //return RedirectToAction("Index");
                         ViewBag.SuccessRegisterUser = true;
                         //return View("Index", model);
-                        return RedirectToAction("Index", "Home", new { area = "" });
+                        return RedirectToAction("Index", "Home", new { area = "", status = "SuccessRegister" });
                     }
                 }
             }
