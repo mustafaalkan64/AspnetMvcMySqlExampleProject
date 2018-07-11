@@ -18,8 +18,9 @@ namespace web.Areas.admin.Controllers
         private readonly string myConnectionString = ConfigurationManager.AppSettings["MySqlConnectionString"];
 
         // GET: admin/Article
-        public ActionResult Index()
+        public ActionResult Index(int MemberId = 0)
         {
+            ViewBag.MemberId = MemberId;
             return View();
         }
 
@@ -60,7 +61,7 @@ namespace web.Areas.admin.Controllers
 
         }
 
-        public ActionResult LoadData()
+        public ActionResult LoadData(int MemberId = 0)
         {
             try
             {
@@ -83,25 +84,38 @@ namespace web.Areas.admin.Controllers
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
                 int skip = start != null ? Convert.ToInt32(start) : 0;
                 int recordsTotal = 0;
-                var conditionsql = "";
 
                 if (!string.IsNullOrEmpty(searchValue))
                 {
-                    sql += " WHERE c.comment LIKE '%" + searchValue +
+                    sql += " WHERE ( c.comment LIKE '%" + searchValue +
                         "%' OR c.commentbyusername LIKE '%" + searchValue +
                         "%' OR a.Caption LIKE '%" + searchValue +
                         "%' OR a.ArticleContent LIKE '%" + searchValue +
                         "%' OR c.IpAddress LIKE '%" + searchValue +
-                        "%' OR c.email LIKE '%" + searchValue + "%' ";
+                        "%' OR c.email LIKE '%" + searchValue + "%' ) ";
 
-                    countsql += " WHERE c.comment LIKE '%" + searchValue +
+                    countsql += " WHERE ( c.comment LIKE '%" + searchValue +
                         "%' OR c.commentbyusername LIKE '%" + searchValue +
                         "%' OR a.Caption LIKE '%" + searchValue +
                         "%' OR a.ArticleContent LIKE '%" + searchValue +
                         "%' OR c.IpAddress LIKE '%" + searchValue +
-                        "%' OR c.email LIKE '%" + searchValue + "%' ";
+                        "%' OR c.email LIKE '%" + searchValue + "%' ) ";
+
+                    if(MemberId > 0)
+                    {
+                        sql += " AND c.memberId =" + MemberId;
+                        countsql += " AND c.memberId =" + MemberId;
+                    }
 
                     //_listarticle = _listarticle.Where(x => x.Caption.Contains(searchValue) || x.ArticleContent.Contains(searchValue) || x.CategoryName.Contains(searchValue));
+                }
+                else
+                {
+                    if (MemberId > 0)
+                    {
+                        sql += " WHERE c.memberId =" + MemberId;
+                        countsql += " WHERE c.memberId =" + MemberId;
+                    }
                 }
 
                 //Sorting    

@@ -38,5 +38,6 @@ namespace web.Models
         public string Comment { get; set; }
 
         public bool IsBlocked { get; set; }
+        public int MemberId { get; set; }
     }
 }

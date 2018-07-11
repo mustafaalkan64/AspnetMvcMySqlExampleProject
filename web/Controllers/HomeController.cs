@@ -79,7 +79,7 @@ namespace web.Controllers
                         sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
                          " join articleımages as aı on a.Id = aı.ArticleId " +
                          " join category as c on a.CategoryId = c.ID " +
-                         " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
+                         " left join (select count(ID) as commentcount, articleId from webdb.comments where isaccepted = 1 group by articleId) as comment on a.ID = comment.articleId " +
                          " where c.ID = @categoryId order by a.ID desc ";
                     }
                     else if (Month > 0)
@@ -87,7 +87,7 @@ namespace web.Controllers
                         sql = "select a.*, c.Name as CategoryName, aı.ArticleImageUrl as imageurl, comment.commentcount as _count from webdb.article as a " +
                          " join articleımages as aı on a.Id = aı.ArticleId " +
                          " join category as c on a.CategoryId = c.ID " +
-                         " left join (select count(ID) as commentcount, articleId from webdb.comments group by articleId) as comment on a.ID = comment.articleId " +
+                         " left join (select count(ID) as commentcount, articleId from webdb.comments where isaccepted = 1 group by articleId) as comment on a.ID = comment.articleId " +
                          " where MONTH(a.CreateDate) = @month order by a.ID desc ";
                     }
 
@@ -586,6 +586,7 @@ namespace web.Controllers
                                 }
                                 comment.UserName = reader["AdSoyad"].ToString();
                                 comment.Phone = reader["Mobil"].ToString();
+                                comment.MemberId = Convert.ToInt32(reader["id"]);
                             }
                             ViewBag.HasUser = true;
                         }
@@ -627,13 +628,14 @@ namespace web.Controllers
                     conn.Open();
                     using (var comm = conn.CreateCommand())
                     {
-                        comm.CommandText = "insert into webdb.comments(comment, commentbyusername, isaccepted, createdate, articleId, IpAddress, email) values(@comment, @commentbyusername, @isaccepted, @createdate, @articleId, @IpAddress, @email)";
+                        comm.CommandText = "insert into webdb.comments(comment, commentbyusername, isaccepted, createdate, articleId, IpAddress, email, memberId) values(@comment, @commentbyusername, @isaccepted, @createdate, @articleId, @IpAddress, @email, @memberId)";
                         comm.Parameters.AddWithValue("?comment", model.Comment);
                         comm.Parameters.AddWithValue("?isaccepted", false);
                         comm.Parameters.AddWithValue("?createdate", DateTime.Now);
                         comm.Parameters.AddWithValue("?articleId", model.ArticleId);
                         comm.Parameters.AddWithValue("?IpAddress", ip);
                         comm.Parameters.AddWithValue("?email", model.Email);
+                        comm.Parameters.AddWithValue("?memberId", model.MemberId);
                         comm.Parameters.AddWithValue("?commentbyusername", model.UserName);
                         comm.ExecuteNonQuery();
 
